@@ -6,7 +6,7 @@
 	<meta title="eclipse" package="eclipse" version="1.0.0" company="scorder" />
 	
 	<!-- output -->
-	<app main="Main" file="eclipse" path="bin" />
+	<app main="Main" file="ld35_eclipse" path="bin" />
 	
 	<window background="#000000" fps="60" />
 	<window width="512" height="512" unless="mobile" />

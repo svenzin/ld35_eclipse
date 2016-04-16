@@ -39,6 +39,10 @@ class Part
 		type = _type;
 	}
 }
+interface IStepper
+{
+	function step() : Void;
+}
 class Eclipse implements IGame
 {
 	public var WIDTH : Int = 256;
@@ -57,6 +61,7 @@ class Eclipse implements IGame
 		Parts.load();
 	}
 	
+	public var steppers = new List<IStepper>();
 	public function step()
 	{
 		info.update();
@@ -67,11 +72,17 @@ class Eclipse implements IGame
 			level.init();
 		}
 		level.step();
+		
+		for (stepper in steppers)
+		{
+			stepper.step();
+		}
 	}
 	
+	static public var instance : Eclipse;
 	public function new() 
 	{
-		
+		instance = this;
 	}
 	
 }

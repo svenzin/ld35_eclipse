@@ -3,6 +3,8 @@ import eclipse.Level.PhxEntity;
 import eclipse.Level.Planet;
 import eclipse.col.Col;
 import eclipse.col.Disk;
+import eclipse.particle.Attractor;
+import eclipse.particle.Emitter;
 import lde.Key;
 import lde.Lde;
 import lde.gfx.Animation;
@@ -110,7 +112,14 @@ class Planet extends PhxEntity
 		
 	}
 }
-
+class Spark
+{
+	public var attractor = new Attractor();
+	public function new()
+	{
+		
+	}
+}
 class Level
 {
 
@@ -120,7 +129,10 @@ class Level
 	}
 
 	var col = new Col();
-	
+
+	var spark : Spark;
+	var attractor = new Attractor();
+	var emitter = new Emitter();
 	var koa = new Core();
 	var planet : Planet;
 	public function init()
@@ -133,34 +145,67 @@ class Level
 		Lde.add(koa);
 		col.objects.add(koa.phx);
 		koa.moveTo(20, 20);
+		target = koa;
+		
+		emitter.data = Art.rect(2, 2, Color.GREY_25);
+		emitter.dampen = 0.01;
+		emitter.lifetime = 60;
+		emitter.position = new Point(koa.x, koa.y);
+		emitter.strength = 0.2;
+		emitter.vitality = 0.5;
+		//emitter.direction = Point.polar(0.5, 0);
+		Lde.add(emitter);
+		Eclipse.instance.steppers.add(emitter);
+		
+		attractor.data = Art.rect(2, 2, Color.PURPLE);
+		attractor.lifetime = 120;
+		attractor.position = emitter.position;
+		attractor.radius = 30;
+		attractor.strength = 10;
+		attractor.vitality = 0.2;
+		Lde.add(attractor);
+		Eclipse.instance.steppers.add(attractor);
 		
 		Lde.add(col);
 	}
-	
+
+	var target : Core = null;
 	public function step()
 	{
-		var ax : Float = 0;
-		var ay : Float = 0;
-		if (Key.isDown(Keyboard.LEFT)) ax -= 1;
-		if (Key.isDown(Keyboard.RIGHT)) ax += 1;
-		if (Key.isDown(Keyboard.UP)) ay -= 1;
-		if (Key.isDown(Keyboard.DOWN)) ay += 1;
+		var a = new Point();
+		if (Key.isDown(Keyboard.LEFT)) a.x -= 1;
+		if (Key.isDown(Keyboard.RIGHT)) a.x += 1;
+		if (Key.isDown(Keyboard.UP)) a.y -= 1;
+		if (Key.isDown(Keyboard.DOWN)) a.y += 1;
 		
-		if (Key.isPushed(Keyboard.NUMBER_1)) col.visible = !col.visible;
+		if (Key.isPushed(Keyboard.SPACE)) attractor.is_active = !attractor.is_active;
 		
-		ax = 0.2 * ax;
-		ay = 0.2 * ay;
+		if (Key.isPushed(Keyboard.NUMBER_1)) Lde.visible = !Lde.visible;
+		if (Key.isPushed(Keyboard.NUMBER_2)) col.visible = !col.visible;
 		
-		koa.vx = 0.9 * koa.vx + ax;
-		koa.vy = 0.9 * koa.vy + ay;
+		if (Key.isPushed(Keyboard.ESCAPE)) target = null;
 		
-		koa.moveBy(koa.vx, koa.vy);
+		a.normalize(0.2);
 		
-		var hit = col.check_one(koa.phx, planet.phx);
-		if (hit != null)
+		if (target != null)
 		{
-			var d = hit.depth;
-			koa.moveBy(-d.x, -d.y);
+			target.vx = 0.9 * target.vx + a.x;
+			target.vy = 0.9 * target.vy + a.y;
+			
+			target.moveBy(target.vx, target.vy);
+			
+			var hit = col.check_one(target.phx, planet.phx);
+			if (hit != null)
+			{
+				var d = hit.depth;
+				target.moveBy(-d.x, -d.y);
+			}
+			emitter.position.x = target.x + Parts.size / 2;
+			emitter.position.y = target.y + Parts.size / 2;
+			emitter.direction.x = -a.x;
+			emitter.direction.y = -a.y;
+			emitter.direction.normalize(0.5);
 		}
+		emitter.is_active = (a.length != 0) && (target != null);
 	}
 }

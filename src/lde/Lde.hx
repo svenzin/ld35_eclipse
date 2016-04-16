@@ -71,14 +71,24 @@ class Lde
 	}
 	
 	public static var objects : List<Entity>;
+	public static var removed : List<Entity>;
 	static public function add(object : Entity)
 	{
 		objects.add(object);
+	}
+	static public function remove(object : Entity)
+	{
+		removed.add(object);
+	}
+	static public function cleanup()
+	{
+		for (o in removed) objects.remove(o);
 	}
 	
 	public static var _width : Float;
 	public static var _height : Float;
 	public static var _scale : Float;
+	public static var visible : Bool;
 	static var surface : Bitmap;
 	static public function init(width : Int, height : Int, scale : Int = 1)
 	{
@@ -93,7 +103,10 @@ class Lde
 		surface.scaleX = scale;
 		surface.scaleY = scale;
 		
+		visible = true;
+		
 		objects = new List<Entity>();
+		removed = new List<Entity>();
 		
 		Lib.current.stage.addChild(surface);
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, step);
@@ -109,12 +122,17 @@ class Lde
 	{
 		_game.step();
 		
+		cleanup();
+		
 		++frame;
 		
 		surface.bitmapData.fillRect(surface.bitmapData.rect, 0x000000);
-		for (object in objects)
+		if (visible)
 		{
-			object.render(surface);
+			for (object in objects)
+			{
+				object.render(surface);
+			}
 		}
 		
 		Key.step();
