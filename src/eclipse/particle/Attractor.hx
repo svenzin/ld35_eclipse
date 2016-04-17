@@ -47,7 +47,7 @@ class Attractor extends Entity implements IStepper
 					t.push(0);
 				}
 				
-				var z = 2 * Math.PI * Std.random(360) / 360;
+				var z = 2 * Math.PI * Math.random();
 				p[n] = Point.polar(radius, z).add(position);
 				v[n].x = 0;
 				v[n].y = 0;

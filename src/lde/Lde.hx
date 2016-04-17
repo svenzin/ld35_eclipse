@@ -16,11 +16,13 @@ class Entity
 {
 	public function new()
 	{
+		is_visible = true;
 		graphics = null;
 	}
 	public var x : Float;
 	public var y : Float;
 	
+	public var is_visible : Bool;
 	public var graphics : AnimationPlayback;
 	public function play(animation : Animation)
 	{
@@ -29,7 +31,10 @@ class Entity
 	}
 	public function render(surface : Bitmap)
 	{
-		if (graphics != null) graphics.renderAt(new Point(x, y), surface);
+		if (graphics != null && is_visible)
+		{
+			graphics.renderAt(new Point(x, y), surface);
+		}
 	}
 }
 interface IGame
@@ -85,6 +90,8 @@ class Lde
 		for (o in removed) objects.remove(o);
 	}
 	
+	public static var hud : List<Entity>;
+	
 	public static var _width : Float;
 	public static var _height : Float;
 	public static var _scale : Float;
@@ -107,6 +114,8 @@ class Lde
 		
 		objects = new List<Entity>();
 		removed = new List<Entity>();
+		
+		hud = new List<Entity>();
 		
 		Lib.current.stage.addChild(surface);
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, step);
@@ -133,6 +142,10 @@ class Lde
 			{
 				object.render(surface);
 			}
+		}
+		for (object in hud)
+		{
+			object.render(surface);
 		}
 		
 		Key.step();

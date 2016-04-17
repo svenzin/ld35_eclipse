@@ -1,5 +1,6 @@
 package eclipse.col;
-import eclipse.Level.PhxEntity;
+import eclipse.Art;
+import eclipse.Level;
 import eclipse.col.Col.Hit;
 import lde.Lde;
 import openfl.display.Bitmap;
@@ -12,11 +13,17 @@ import openfl.geom.Point;
  */
 class ColShape
 {
-	public var parent : PhxEntity = null;
+	public var parent : MyEntity = null;
+	public function new(_p = null)
+	{
+		parent = _p;
+	}
 }
 class Hit
 {
+	public var source : ColShape;
 	public var shape : ColShape;
+	public var point : Point;
 	public var depth : Point;
 	
 	public function new()
@@ -32,6 +39,26 @@ class Col extends Entity
 	}
 	
 	public var objects = new List<Disk>();
+	public function check_all() : List<Hit>
+	{
+		var hits = new List<Hit>();
+		for (source in objects)
+		{
+			var i = objects.iterator();
+			while (i.hasNext())
+			{
+				var other = i.next();
+				if (other == source) break;
+				
+				var hit = check_one(source, other);
+				if (hit != null)
+				{
+					hits.push(hit);
+				}
+			}
+		}
+		return hits;
+	}
 	public function check(object : Disk) : List<Hit>
 	{
 		var colliders = new List<Hit>();
@@ -56,9 +83,13 @@ class Col extends Entity
 			if (depth >= 0)
 			{
 				var hit = new Hit();
+				hit.source = _source;
 				hit.shape = _other;
 				hit.depth = p2.subtract(p1);
 				hit.depth.normalize(depth);
+				hit.point = p2.subtract(p1);
+				hit.point.normalize(_source.r + 0.5 * depth);
+				hit.point = hit.point.add(p1);
 				return hit;
 			}
 		}

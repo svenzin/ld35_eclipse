@@ -12,7 +12,8 @@ class Art
 	//public static var CORE
 	public static function rect(w : Int, h : Int, c : Int)
 	{
-		return new BitmapData(w, h, false, c);
+		var transparency = (c > 0x01000000);
+		return new BitmapData(w, h, transparency, c);
 	}
 
 	public static function disk(r : Int, c : Int)

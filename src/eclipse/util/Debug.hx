@@ -27,7 +27,7 @@ class Debug extends TextField
 		
 		times = [];
 		width = 150;
-		height = 70;
+		height = 150;
 	}
 	
 	public function update()
@@ -46,7 +46,9 @@ class Debug extends TextField
 			text = "FPS: " + times.length + "\n"
 				+ "MEM: " + mem + " MB\n"
 				+ "MEM peak: " + memPeak + " MB\n"
-				+ "Entities: " + Lde.objects.length;
+				+ "Entities: " + Lde.objects.length + "\n"
+				+ "Colliders: " + Eclipse.instance.collider.objects.length + "\n"
+				+ "Steppers: " + Eclipse.instance.steppers.length;
 		}
 	}
 	

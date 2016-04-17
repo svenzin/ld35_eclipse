@@ -50,7 +50,7 @@ class Emitter extends Entity implements IStepper
 				
 				p[n].x = position.x;
 				p[n].y = position.y;
-				var z = 2 * Math.PI * Std.random(360) / 360;
+				var z = 2 * Math.PI * Math.random();
 				v[n] = Point.polar(strength, z).add(direction);
 				t[n] = lifetime;
 				++n;

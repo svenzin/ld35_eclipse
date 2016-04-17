@@ -52,11 +52,15 @@ class AnimationPlayback
 			_x = _x - Std.int(_x);
 			if (_n <= 0)
 			{
-				_x = 0.99;
+				_x = 0.999;
 				_n = 0;
 				pause();
 			}
 		}
 		return Std.int(_animation.frames.length * _x);
+	}
+	public function isDone()
+	{
+		return (_n == 0) && (_x == 0.999);
 	}
 }
