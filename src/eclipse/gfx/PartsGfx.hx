@@ -28,6 +28,8 @@ class PartsGfx
 	public static var SHIELD_BURST : Animation;
 	public static var SOURCE : Animation;
 	public static var SOURCE_BURST : Animation;
+	
+	public static var HEART : BitmapData;
 
 	static var data : BitmapData = null;
 	public static function load()
@@ -50,6 +52,8 @@ class PartsGfx
 			SHIELD_BURST = new Animation(slice([ [5, 1], [5, 2] ]));
 			SOURCE       = new Animation(slice([ [6, 0] ]));
 			SOURCE_BURST = new Animation(slice([ [6, 1], [6, 2] ]));
+			
+			HEART = tile(7, 0);
 		}
 	}
 	static function tile(_x : Int, _y : Int)

@@ -1,5 +1,6 @@
 package eclipse;
 import eclipse.Level.Ship;
+import eclipse.fx.Lover;
 import eclipse.gfx.PartGfx;
 import eclipse.Level.Planet;
 import eclipse.col.Col;
@@ -224,7 +225,6 @@ class Ship extends MyEntity implements IStepper
 				t.at(parts[i].x + PartsGfx.size / 2,
 				                parts[i].y + PartsGfx.size / 2);
 				t.towards( -ax, -ay);
-				t.is_visible = (ax != 0) || (ay != 0);
 				t.step();
 			}
 		}
@@ -279,14 +279,14 @@ class Planet extends MyEntity
 		return p;
 	}
 
-	public function can_absorb(_part : Part) : Bool
+	public function can_absorb() : Bool
 	{
 		return parts.length < max_parts;
 	}
 	
 	public function absorb(_part : Part)
 	{
-		if (can_absorb(_part))
+		if (can_absorb())
 		{
 			for (p in _part.phx)
 			{
@@ -308,6 +308,9 @@ class Planet extends MyEntity
 	public var state = GROWING;
 	public function bloom()
 	{
+		new Lover().position.setTo(
+			x + PlanetsGfx.radius[max_parts],
+			y + PlanetsGfx.radius[max_parts]);
 		state = PEACEFUL;
 	}
 	public function destroy()

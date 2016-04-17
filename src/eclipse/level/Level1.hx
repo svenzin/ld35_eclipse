@@ -1,6 +1,8 @@
 package eclipse.level;
 import eclipse.Eclipse.BaseLevel;
 import eclipse.Level;
+import eclipse.fx.Explosion;
+import eclipse.fx.Lover;
 import eclipse.fx.Spark;
 import flash.geom.Point;
 import lde.Lde;
@@ -9,22 +11,22 @@ import lde.Lde;
  * ...
  * @author scorder
  */
-class Level1 extends BaseLevel
+class Level1 extends Root
 {
 
 	public function new() 
 	{
+		super();
+		next = new Level2();
 	}
 	
-	public var entities = new List<MyEntity>();
-
 	var planet : Planet;
 	override public function init():Void 
 	{
 		planet = Planet.make(1);
 		planet.moveTo(250, 100);
 		
-		Tween.wait(60).then(function ()
+		Tween.wait(15).then(function ()
 		{
 			Spark.at(new Point(50, 100), function (p)
 			{
@@ -39,17 +41,22 @@ class Level1 extends BaseLevel
 		});
 	}
 	
+	public function victory()
+	{
+		Tween.wait(150).then(function ()
+		{
+			entities.clear();
+			Eclipse.get().collider.objects.clear();
+			Eclipse.get().steppers.clear();
+			Lde.objects.clear();
+			state = BaseLevel.VICTORY;
+		});
+	}
+	
 	override public function step():Void 
 	{
-		Controller.apply();
+		super.step();
 		
-		for (e in entities)
-		{
-			e.vx = 0.9 * e.vx + e.ax;
-			e.vy = 0.9 * e.vy + e.ay;
-			e.moveBy(e.vx, e.vy);
-		}
-
 		var hits = Eclipse.instance.collider.check(planet.phx[0]);
 		for (hit in hits)
 		{
@@ -60,17 +67,14 @@ class Level1 extends BaseLevel
 				planet.absorb(part);
 				Controller.release();
 				entities.remove(ship);
+				
+				Explosion.at(hit.point);
 			}
 		}
 		
 		if (planet.state == Planet.PEACEFUL)
 		{
-			entities.clear();
-			Eclipse.get().collider.objects.clear();
-			Eclipse.get().steppers.clear();
-			Lde.objects.clear();
-			
-			state = BaseLevel.VICTORY;
+			victory();
 		}
 	}
 }

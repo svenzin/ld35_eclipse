@@ -49,8 +49,8 @@ class Eclipse implements IGame
 	
 	public function init()
 	{
-		info.visible = true;
-		Lib.current.stage.addChild(info);
+		//info.visible = true;
+		//Lib.current.stage.addChild(info);
 		
 		Lde.hud.add(collider);
 		
